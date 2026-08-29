@@ -1,3 +1,4 @@
+using ImageStorage.Api.DTOs;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
@@ -6,23 +7,23 @@ namespace ImageStorage.Api.Helpers;
 
 public class ImageOptimizerService()
 {
-    public async Task<MemoryStream> Process(IFormFile file)
+    public async Task<byte[]> Process(CreateImageDto dto)
     {
-        using var stream = file.OpenReadStream();
+        Stream stream = dto.File.OpenReadStream();
 
-        using var image = await Image.LoadAsync(stream);
+        Image image = await Image.LoadAsync(stream);
 
-        using var outputStream = new MemoryStream();
+        MemoryStream outputStream = new MemoryStream();
 
         image.Mutate(x => x.Resize(new ResizeOptions
         {
-            Size = new Size(800, 0),
+            Size = new Size(dto.Width ?? 800, dto.Height ?? 0),
             Mode = ResizeMode.Max
         }));
 
-        await image.SaveAsync(outputStream, new WebpEncoder { Quality = 80 });
+        await image.SaveAsync(outputStream, new WebpEncoder { Quality = dto.Quality ?? 80 });
 
-        return outputStream;
+        return outputStream.ToArray();
     }
 }
 

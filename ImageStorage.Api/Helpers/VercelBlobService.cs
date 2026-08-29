@@ -3,22 +3,16 @@ using System.Text.Json;
 
 namespace ImageStorage.Api.Helpers;
 
-public class VercelBlobService(HttpClient httpClient, ImageOptimizerService imageOptimizerService)
+public class VercelBlobService(HttpClient httpClient)
 {
-    public async Task<JsonElement> UploadAsync(IFormFile file)
+    public async Task<JsonElement> UploadAsync(string fileName, byte[] content)
     {
-        var outputStream = await imageOptimizerService.Process(file);
-
-        long timestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        var fileName = $"img-{timestampMs}.webp";
-        var pathname = $"images/{fileName}";
-
         var request = new HttpRequestMessage(HttpMethod.Put,
-            $"https://blob.vercel-storage.com/{pathname}");
+            $"https://blob.vercel-storage.com/{fileName}");
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "vercel_blob_rw_T6CYjRH2bX7cUTzo_rwGYxJcEuV60vC2N2VDFaKhlp0CYaR");
 
-        request.Content = new ByteArrayContent(outputStream.ToArray());
+        request.Content = new ByteArrayContent(content);
         request.Content.Headers.ContentType = new MediaTypeHeaderValue("image/webp");
 
         var response = await httpClient.SendAsync(request);
@@ -33,7 +27,7 @@ public class VercelBlobService(HttpClient httpClient, ImageOptimizerService imag
         var request = new HttpRequestMessage(HttpMethod.Post,
             "https://blob.vercel-storage.com/delete");
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "vercel_blob_rw_T6CYjRH2bX7cUTzo_rwGYxJcEuV60vC2N2VDFaKhlp0CYaR");
 
         request.Content = JsonContent.Create(new { urls = new[] { blobUrl } });
 

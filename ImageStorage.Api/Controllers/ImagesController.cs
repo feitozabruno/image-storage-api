@@ -1,30 +1,25 @@
+using ImageStorage.Api.DTOs;
 using ImageStorage.Api.Helpers;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace ImageStorage.Api.Controllers;
 
 [ApiController]
 [Route("/api/v1/[controller]")]
-public class ImagesController(VercelBlobService vercelBlobService) : ControllerBase
+public class ImagesController(ImagesService imagesService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Upload([FromForm] IFormFile file)
+    public async Task<IActionResult> Upload(CreateImageDto dto)
     {
-        if (file == null || file.Length == 0) return BadRequest("Nenhum arquivo enviado");
-        var response = await vercelBlobService.UploadAsync(file);
+        if (dto.File == null || dto.File.Length == 0) return BadRequest("Nenhum arquivo enviado");
+        var response = await imagesService.UploadAsync(dto);
         return Ok(response);
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromBody] DeleteImageDto dto)
     {
-        await vercelBlobService.DeleteAsync(dto.BlobUrl);
+        await imagesService.DeleteAsync(dto.BlobUrl);
         return NoContent();
     }
-}
-
-public record DeleteImageDto
-{
-    public string BlobUrl { get; set; } = string.Empty;
 }
