@@ -43,6 +43,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'image-storage-api'
+          app-name: 'imagestorageapi'
           slot-name: 'Production'
           images: ${{ secrets.ACR_LOGIN_SERVER }}/imagestorageapi:${{ github.sha }}
