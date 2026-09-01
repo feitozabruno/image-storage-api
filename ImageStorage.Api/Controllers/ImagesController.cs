@@ -1,12 +1,12 @@
 using ImageStorage.Api.DTOs;
-using ImageStorage.Api.Helpers;
+using ImageStorage.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ImageStorage.Api.Controllers;
 
 [ApiController]
 [Route("/api/v1/[controller]")]
-public class ImagesController(ImagesService imagesService) : ControllerBase
+public class ImagesController(IImagesService imagesService) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Upload(CreateImageDto dto)

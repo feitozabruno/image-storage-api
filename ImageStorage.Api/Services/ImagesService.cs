@@ -1,9 +1,10 @@
 using System.Text.Json;
 using ImageStorage.Api.DTOs;
+using ImageStorage.Api.Services.Interfaces;
 
-namespace ImageStorage.Api.Helpers;
+namespace ImageStorage.Api.Services;
 
-public class ImagesService(ImageOptimizerService imageOptimizerService, VercelBlobService vercelBlobService)
+public class ImagesService(IImageOptimizerService imageOptimizerService, IVercelBlobService vercelBlobService) : IImagesService
 {
     public async Task<JsonElement> UploadAsync(CreateImageDto dto)
     {

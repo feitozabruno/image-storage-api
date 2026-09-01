@@ -1,11 +1,12 @@
 using ImageStorage.Api.DTOs;
+using ImageStorage.Api.Services.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 
-namespace ImageStorage.Api.Helpers;
+namespace ImageStorage.Api.Services;
 
-public class ImageOptimizerService()
+public class ImageOptimizerService : IImageOptimizerService
 {
     public async Task<byte[]> Process(CreateImageDto dto)
     {

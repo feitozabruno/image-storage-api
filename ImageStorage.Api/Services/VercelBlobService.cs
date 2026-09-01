@@ -1,16 +1,19 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using ImageStorage.Api.Services.Interfaces;
 
-namespace ImageStorage.Api.Helpers;
+namespace ImageStorage.Api.Services;
 
-public class VercelBlobService(HttpClient httpClient)
+public class VercelBlobService(HttpClient httpClient, IConfiguration config) : IVercelBlobService
 {
+    private readonly string _token = config["VERCEL_BLOB_TOKEN:Secret"]!;
+
     public async Task<JsonElement> UploadAsync(string fileName, byte[] content)
     {
         var request = new HttpRequestMessage(HttpMethod.Put,
             $"https://blob.vercel-storage.com/{fileName}");
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "vercel_blob_rw_T6CYjRH2bX7cUTzo_rwGYxJcEuV60vC2N2VDFaKhlp0CYaR");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
         request.Content = new ByteArrayContent(content);
         request.Content.Headers.ContentType = new MediaTypeHeaderValue("image/webp");
@@ -27,7 +30,7 @@ public class VercelBlobService(HttpClient httpClient)
         var request = new HttpRequestMessage(HttpMethod.Post,
             "https://blob.vercel-storage.com/delete");
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "vercel_blob_rw_T6CYjRH2bX7cUTzo_rwGYxJcEuV60vC2N2VDFaKhlp0CYaR");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
         request.Content = JsonContent.Create(new { urls = new[] { blobUrl } });
 
