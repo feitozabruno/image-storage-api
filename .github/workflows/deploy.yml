@@ -26,8 +26,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./
+          file: ./Dockerfile
           push: true
           tags: |
             ${{ secrets.ACR_LOGIN_SERVER }}/image-storage-api:${{ github.sha }}
